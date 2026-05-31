@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>轮播图管理</title><link rel="stylesheet" href="/css/style.css"></head>
+<body>
+<header class="topbar"><a class="brand" href="/admin">管理后台</a><nav class="nav"><a href="/admin">后台首页</a><a href="/admin/notices">公告管理</a><a href="/logout">退出</a></nav></header>
+<main class="container panel">
+    <h1 class="title">轮播图管理</h1>
+    <form class="form" method="post" action="/admin/banners">
+        <label>标题 <input name="title" required></label>
+        <label>图片地址 <input name="imageUrl" required placeholder="/uploads/banner/book-zone.jpg"></label>
+        <label>链接地址 <input name="linkUrl" placeholder="/goods"></label>
+        <label>排序 <input type="number" name="sortOrder" value="0"></label>
+        <button class="btn" type="submit">新增轮播</button>
+    </form>
+    <table class="table">
+        <thead><tr><th>标题</th><th>图片</th><th>链接</th><th>排序</th><th>状态</th><th>操作</th></tr></thead>
+        <tbody>
+        <tr th:each="banner : ${banners}">
+            <form method="post" th:action="@{/admin/banners/{id}(id=${banner.id})}">
+                <td><input name="title" th:value="${banner.title}" required></td>
+                <td><input name="imageUrl" th:value="${banner.imageUrl}" required></td>
+                <td><input name="linkUrl" th:value="${banner.linkUrl}"></td>
+                <td><input type="number" name="sortOrder" th:value="${banner.sortOrder}"></td>
+                <td><select name="status"><option value="1" th:selected="${banner.status == 1}">启用</option><option value="0" th:selected="${banner.status == 0}">禁用</option></select></td>
+                <td><button class="btn light" type="submit">保存</button></td>
+            </form>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

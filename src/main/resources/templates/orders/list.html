@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">订单列表</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="/goods">校园二手交易平台</a>
+    <nav class="nav"><a href="/goods">商品列表</a><a href="/orders/buy">购买订单</a><a href="/orders/sell">出售订单</a><a href="/admin" th:if="${session.loginUser != null && session.loginUser.roleCode == 'admin'}">后台</a><a href="/logout">退出</a></nav>
+</header>
+<main class="container panel">
+    <h1 class="title" th:text="${title}">订单列表</h1>
+    <table class="table">
+        <thead><tr><th>订单号</th><th>商品</th><th>买家</th><th>卖家</th><th>金额</th><th>地点</th><th>状态</th><th>操作</th></tr></thead>
+        <tbody>
+        <tr th:each="order : ${orders}">
+            <td th:text="${order.orderNo}"></td>
+            <td><a th:href="@{/goods/{id}(id=${order.goodsId})}" th:text="${order.goodsTitle}"></a></td>
+            <td th:text="${order.buyerName}"></td>
+            <td th:text="${order.sellerName}"></td>
+            <td th:text="${order.totalAmount}"></td>
+            <td th:text="${order.tradePlace}"></td>
+            <td th:text="${order.status == 1 ? '交易中' : (order.status == 2 ? '已完成' : (order.status == 3 ? '已取消' : '待确认'))}"></td>
+            <td class="row">
+                <form method="post" th:if="${session.loginUser != null && session.loginUser.id == order.buyerId && order.status <= 1}" th:action="@{/orders/{id}/cancel(id=${order.id})}">
+                    <button class="btn danger" type="submit">取消订单</button>
+                </form>
+                <form method="post" th:if="${session.loginUser != null && session.loginUser.id == order.sellerId && order.status == 1}" th:action="@{/orders/{id}/complete(id=${order.id})}">
+                    <button class="btn" type="submit">确认完成</button>
+                </form>
+                <form class="row" method="post" th:if="${session.loginUser != null && session.loginUser.id == order.buyerId && order.status == 2}" th:action="@{/orders/{id}/review(id=${order.id})}">
+                    <select name="score" required>
+                        <option value="5">5分</option>
+                        <option value="4">4分</option>
+                        <option value="3">3分</option>
+                        <option value="2">2分</option>
+                        <option value="1">1分</option>
+                    </select>
+                    <input name="content" placeholder="评价内容">
+                    <button class="btn light" type="submit">评价</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

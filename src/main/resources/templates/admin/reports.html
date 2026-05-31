@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>举报处理</title><link rel="stylesheet" href="/css/style.css"></head>
+<body>
+<header class="topbar"><a class="brand" href="/admin">管理后台</a><nav class="nav"><a href="/admin">后台首页</a><a href="/admin/goods">商品审核</a><a href="/logout">退出</a></nav></header>
+<main class="container panel">
+    <h1 class="title">举报处理</h1>
+    <table class="table">
+        <thead><tr><th>举报人</th><th>对象</th><th>原因</th><th>说明</th><th>状态</th><th>处理</th></tr></thead>
+        <tbody>
+        <tr th:each="report : ${reports}">
+            <td th:text="${report.reporterName}"></td>
+            <td th:text="${report.targetType + ' #' + report.targetId}"></td>
+            <td th:text="${report.reason}"></td>
+            <td th:text="${report.description}"></td>
+            <td th:text="${report.status == 0 ? '待处理' : (report.status == 1 ? '已处理' : '已驳回')}"></td>
+            <td>
+                <form class="row" method="post" th:action="@{/admin/reports/{id}(id=${report.id})}">
+                    <select name="status"><option value="1">成立</option><option value="2">驳回</option></select>
+                    <input name="handleResult" placeholder="处理结果" th:value="${report.handleResult}">
+                    <button class="btn" type="submit">保存</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420">
+  <rect width="1200" height="420" fill="#0f766e"/>
+  <circle cx="210" cy="110" r="170" fill="#5eead4" opacity=".36"/>
+  <rect x="690" y="95" width="260" height="180" rx="24" fill="#ecfeff"/>
+  <circle cx="985" cy="292" r="52" fill="#99f6e4"/>
+  <text x="120" y="170" font-family="Arial" font-size="58" font-weight="700" fill="#ffffff">电子产品专区</text>
+  <text x="120" y="232" font-family="Arial" font-size="28" fill="#ccfbf1">耳机、键盘、显示器、数码配件</text>
+</svg>

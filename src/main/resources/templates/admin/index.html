@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>后台首页</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="/admin">管理后台</a>
+    <nav class="nav">
+        <a href="/admin/goods">商品审核</a>
+        <a href="/admin/categories">分类管理</a>
+        <a href="/admin/orders">订单管理</a>
+        <a href="/admin/reports">举报处理</a>
+        <a href="/admin/reviews">评价管理</a>
+        <a href="/admin/notices">公告管理</a>
+        <a href="/admin/banners">轮播图</a>
+        <a href="/admin/logs">操作日志</a>
+        <a href="/goods">前台首页</a>
+        <a href="/logout">退出</a>
+    </nav>
+</header>
+<main class="container">
+    <section class="panel">
+        <h1 class="title">后台首页</h1>
+        <p>当前登录管理员：<span th:text="${session.loginUser.nickname}"></span></p>
+        <p class="muted">第二阶段已加入商品审核、分类、订单、公告等交易闭环管理入口。</p>
+    </section>
+    <section class="stats-grid">
+        <article class="stat-card" th:each="card : ${cards}">
+            <span th:text="${card.key}"></span>
+            <strong th:text="${card.value}"></strong>
+        </article>
+    </section>
+    <section class="panel">
+        <h2 class="title">商品分类统计</h2>
+        <div class="bar-row" th:each="item : ${goodsByCategory}">
+            <span th:text="${item.key}"></span>
+            <div class="bar-track"><div class="bar-fill" th:style="'width:' + (${item.value} * 18 + 8) + 'px'"></div></div>
+            <strong th:text="${item.value}"></strong>
+        </div>
+    </section>
+    <section class="panel">
+        <h2 class="title">订单状态统计</h2>
+        <div class="bar-row" th:each="item : ${ordersByStatus}">
+            <span th:text="${item.key}"></span>
+            <div class="bar-track accent"><div class="bar-fill" th:style="'width:' + (${item.value} * 24 + 8) + 'px'"></div></div>
+            <strong th:text="${item.value}"></strong>
+        </div>
+    </section>
+    <section class="panel">
+        <h2 class="title">最近商品</h2>
+        <table class="table">
+            <tr th:each="goods : ${pageData.records}">
+                <td th:text="${goods.title}"></td>
+                <td th:text="${goods.categoryName}"></td>
+                <td th:text="${goods.price}"></td>
+                <td th:text="${goods.status == 0 ? '待审核' : (goods.status == 1 ? '已上架' : (goods.status == 2 ? '已下架' : (goods.status == 3 ? '已售出' : '审核失败')))}"></td>
+            </tr>
+        </table>
+    </section>
+</main>
+</body>
+</html>

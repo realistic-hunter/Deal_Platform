@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>商品表单</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="/goods">校园二手交易平台</a>
+    <nav class="nav"><a href="/goods">商品列表</a><a href="/goods/my">我的发布</a><a href="/logout">退出</a></nav>
+</header>
+<main class="container panel">
+    <h1 class="title" th:text="${goods.id == null ? '发布商品' : '修改商品'}"></h1>
+    <div class="alert error" th:if="${error}" th:text="${error}"></div>
+    <form class="form" method="post" enctype="multipart/form-data" th:action="${goods.id == null ? '/goods/save' : '/goods/update/' + goods.id}">
+        <input type="hidden" name="coverImageUrl" th:value="${goods.coverImageUrl}">
+        <label>商品标题 <input name="title" th:value="${goods.title}" required maxlength="100"></label>
+        <label>商品分类
+            <select name="categoryId" required>
+                <option value="">请选择</option>
+                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}" th:selected="${category.id == goods.categoryId}"></option>
+            </select>
+        </label>
+        <label>价格 <input type="number" name="price" th:value="${goods.price}" required min="0" step="0.01"></label>
+        <label>成色
+            <select name="conditionLevel" required>
+                <option value="1" th:selected="${goods.conditionLevel == 1}">1 较旧</option>
+                <option value="2" th:selected="${goods.conditionLevel == 2}">2 一般</option>
+                <option value="3" th:selected="${goods.conditionLevel == null || goods.conditionLevel == 3}">3 良好</option>
+                <option value="4" th:selected="${goods.conditionLevel == 4}">4 很新</option>
+                <option value="5" th:selected="${goods.conditionLevel == 5}">5 全新</option>
+            </select>
+        </label>
+        <label>交易地点 <input name="tradePlace" th:value="${goods.tradePlace}" maxlength="255"></label>
+        <label>商品图片 <input type="file" name="imageFile" accept="image/*" onchange="previewImage(event)"></label>
+        <img id="preview" class="detail-cover" th:if="${goods.coverImageUrl}" th:src="${goods.coverImageUrl}" alt="图片预览">
+        <label>商品描述 <textarea name="description" required th:text="${goods.description}"></textarea></label>
+        <div class="row">
+            <button class="btn" type="submit">保存</button>
+            <a class="btn light" href="/goods/my">取消</a>
+        </div>
+    </form>
+</main>
+<script>
+function previewImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    let img = document.getElementById('preview');
+    if (!img) {
+        img = document.createElement('img');
+        img.id = 'preview';
+        img.className = 'detail-cover';
+        event.target.closest('label').after(img);
+    }
+    img.src = URL.createObjectURL(file);
+}
+</script>
+</body>
+</html>

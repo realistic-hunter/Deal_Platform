@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8"><title>操作日志</title><link rel="stylesheet" href="/css/style.css"></head>
+<body>
+<header class="topbar"><a class="brand" href="/admin">管理后台</a><nav class="nav"><a href="/admin">后台首页</a><a href="/logout">退出</a></nav></header>
+<main class="container panel">
+    <h1 class="title">操作日志</h1>
+    <table class="table">
+        <thead><tr><th>用户</th><th>类型</th><th>内容</th><th>IP</th><th>时间</th></tr></thead>
+        <tbody>
+        <tr th:each="log : ${logs}">
+            <td th:text="${log.username}"></td>
+            <td th:text="${log.operationType}"></td>
+            <td th:text="${log.operationContent}"></td>
+            <td th:text="${log.ipAddress}"></td>
+            <td th:text="${log.createTime}"></td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

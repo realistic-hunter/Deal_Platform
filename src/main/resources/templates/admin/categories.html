@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>分类管理</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="/admin">管理后台</a>
+    <nav class="nav"><a href="/admin/goods">商品审核</a><a href="/admin/orders">订单管理</a><a href="/admin/notices">公告管理</a><a href="/logout">退出</a></nav>
+</header>
+<main class="container panel">
+    <h1 class="title">分类管理</h1>
+    <form class="row" method="post" action="/admin/categories">
+        <input name="categoryName" required placeholder="分类名称">
+        <input type="number" name="sortOrder" value="0" min="0">
+        <button class="btn" type="submit">新增分类</button>
+    </form>
+    <table class="table">
+        <thead><tr><th>ID</th><th>名称</th><th>排序</th><th>状态</th><th>操作</th></tr></thead>
+        <tbody>
+        <tr th:each="category : ${categories}">
+            <form method="post" th:action="@{/admin/categories/{id}(id=${category.id})}">
+                <td th:text="${category.id}"></td>
+                <td><input name="categoryName" th:value="${category.categoryName}" required></td>
+                <td><input type="number" name="sortOrder" th:value="${category.sortOrder}"></td>
+                <td>
+                    <select name="status">
+                        <option value="1" th:selected="${category.status == 1}">启用</option>
+                        <option value="0" th:selected="${category.status == 0}">禁用</option>
+                    </select>
+                </td>
+                <td><button class="btn light" type="submit">保存</button></td>
+            </form>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

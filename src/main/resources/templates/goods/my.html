@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>我的发布</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="/goods">校园二手交易平台</a>
+    <nav class="nav"><a href="/goods/create">发布商品</a><a href="/goods">商品列表</a><a href="/logout">退出</a></nav>
+</header>
+<main class="container panel">
+    <h1 class="title">我的发布</h1>
+    <table class="table">
+        <thead><tr><th>标题</th><th>分类</th><th>价格</th><th>状态</th><th>操作</th></tr></thead>
+        <tbody>
+        <tr th:each="goods : ${pageData.records}">
+            <td th:text="${goods.title}"></td>
+            <td th:text="${goods.categoryName}"></td>
+            <td th:text="${goods.price}"></td>
+            <td th:text="${goods.status == 0 ? '待审核' : (goods.status == 1 ? '已上架' : (goods.status == 2 ? '已下架' : (goods.status == 3 ? '已售出' : '审核失败')))}"></td>
+            <td class="row">
+                <a class="btn light" th:href="@{/goods/edit/{id}(id=${goods.id})}">修改</a>
+                <form method="post" th:action="@{/goods/delete/{id}(id=${goods.id})}" onsubmit="return confirm('确定删除该商品吗？')">
+                    <button class="btn danger" type="submit">删除</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="pagination">
+        <a class="btn light" th:if="${pageData.hasPrevious}" th:href="@{/goods/my(page=${pageData.page - 1})}">上一页</a>
+        <span th:text="'第 ' + ${pageData.page} + ' / ' + ${pageData.totalPages} + ' 页'"></span>
+        <a class="btn light" th:if="${pageData.hasNext}" th:href="@{/goods/my(page=${pageData.page + 1})}">下一页</a>
+    </div>
+</main>
+</body>
+</html>

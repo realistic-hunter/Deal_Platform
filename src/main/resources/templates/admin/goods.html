@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>商品审核</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="/admin">管理后台</a>
+    <nav class="nav"><a href="/admin">后台首页</a><a href="/admin/categories">分类管理</a><a href="/admin/orders">订单管理</a><a href="/goods">前台首页</a><a href="/logout">退出</a></nav>
+</header>
+<main class="container panel">
+    <h1 class="title">商品审核与管理</h1>
+    <form class="row" method="get" action="/admin/goods">
+        <input name="keyword" th:value="${keyword}" placeholder="搜索商品">
+        <select name="categoryId">
+            <option value="">全部分类</option>
+            <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}" th:selected="${category.id == categoryId}"></option>
+        </select>
+        <button class="btn" type="submit">查询</button>
+        <a class="btn secondary" href="/admin/goods/export">导出 Excel</a>
+    </form>
+    <form id="batchForm" method="post" action="/admin/goods/batch-delete"></form>
+    <table class="table">
+        <thead><tr><th>选择</th><th>商品</th><th>卖家</th><th>分类</th><th>价格</th><th>状态</th><th>操作</th></tr></thead>
+        <tbody>
+        <tr th:each="goods : ${pageData.records}">
+            <td><input type="checkbox" name="ids" th:value="${goods.id}" form="batchForm"></td>
+            <td><a th:href="@{/goods/{id}(id=${goods.id})}" th:text="${goods.title}"></a></td>
+            <td th:text="${goods.sellerName}"></td>
+            <td th:text="${goods.categoryName}"></td>
+            <td th:text="${goods.price}"></td>
+            <td th:text="${goods.status == 0 ? '待审核' : (goods.status == 1 ? '已上架' : (goods.status == 2 ? '已下架' : (goods.status == 3 ? '已售出' : '审核失败')))}"></td>
+            <td class="row">
+                <a class="btn light" th:href="@{/goods/edit/{id}(id=${goods.id})}">修改</a>
+                <form method="post" th:action="@{/admin/goods/{id}/status(id=${goods.id})}">
+                    <input type="hidden" name="status" value="1">
+                    <button class="btn" type="submit">审核通过</button>
+                </form>
+                <form method="post" th:action="@{/admin/goods/{id}/status(id=${goods.id})}">
+                    <input type="hidden" name="status" value="4">
+                    <button class="btn secondary" type="submit">驳回</button>
+                </form>
+                <form method="post" th:action="@{/admin/goods/{id}/status(id=${goods.id})}">
+                    <input type="hidden" name="status" value="2">
+                    <button class="btn secondary" type="submit">下架</button>
+                </form>
+                <form method="post" th:action="@{/goods/delete/{id}(id=${goods.id})}" onsubmit="return confirm('确定删除该商品吗？')">
+                    <button class="btn danger" type="submit">删除</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <button class="btn danger" type="submit" form="batchForm" onclick="return confirm('确定批量删除选中的商品吗？')">批量删除</button>
+    <div class="pagination">
+        <a class="btn light" th:if="${pageData.hasPrevious}" th:href="@{/admin/goods(page=${pageData.page - 1}, keyword=${keyword}, categoryId=${categoryId})}">上一页</a>
+        <span th:text="'第 ' + ${pageData.page} + ' / ' + ${pageData.totalPages} + ' 页，共 ' + ${pageData.total} + ' 条'"></span>
+        <a class="btn light" th:if="${pageData.hasNext}" th:href="@{/admin/goods(page=${pageData.page + 1}, keyword=${keyword}, categoryId=${categoryId})}">下一页</a>
+    </div>
+</main>
+</body>
+</html>

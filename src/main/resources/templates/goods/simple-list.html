@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}">商品</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="/goods">校园二手交易平台</a>
+    <nav class="nav"><a href="/goods">商品列表</a><a href="/profile">个人中心</a><a href="/logout">退出</a></nav>
+</header>
+<main class="container">
+    <h1 class="title" th:text="${title}"></h1>
+    <section class="grid">
+        <article class="card" th:each="goods : ${goodsList}">
+            <img class="cover" th:if="${goods.coverImageUrl}" th:src="${goods.coverImageUrl}" alt="商品图片">
+            <h2 class="title" th:text="${goods.title}"></h2>
+            <p class="price" th:text="'￥' + ${goods.price}"></p>
+            <p class="muted" th:text="${goods.categoryName}"></p>
+            <a class="btn light" th:href="@{/goods/{id}(id=${goods.id})}">查看详情</a>
+        </article>
+    </section>
+</main>
+</body>
+</html>

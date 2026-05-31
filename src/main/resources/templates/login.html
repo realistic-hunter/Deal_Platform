@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登录 - 校园二手交易平台</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<main class="auth panel">
+    <h1 class="title">用户登录</h1>
+    <div class="alert error" th:if="${error}" th:text="${error}"></div>
+    <div class="alert success" th:if="${message}" th:text="${message}"></div>
+    <form class="form" method="post" action="/login">
+        <label>用户名 <input name="username" required maxlength="50"></label>
+        <label>密码 <input type="password" name="password" required maxlength="100"></label>
+        <button class="btn" type="submit">登录</button>
+    </form>
+    <p class="muted">没有账号？<a href="/register">立即注册</a></p>
+</main>
+</body>
+</html>

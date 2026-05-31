@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${goods.title}">商品详情</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="/goods">校园二手交易平台</a>
+    <nav class="nav"><a href="/goods">商品列表</a><a href="/orders/buy">购买订单</a><a href="/orders/sell">出售订单</a><a href="/profile">个人中心</a></nav>
+</header>
+<main class="container">
+    <section class="panel">
+        <img class="detail-cover" th:if="${goods.coverImageUrl}" th:src="${goods.coverImageUrl}" alt="商品图片">
+        <h1 class="title" th:text="${goods.title}"></h1>
+        <p><span class="badge" th:text="${goods.categoryName}"></span></p>
+        <p class="price" th:text="'￥' + ${goods.price}"></p>
+        <p>卖家：<span th:text="${goods.sellerName}"></span></p>
+        <p>成色：<span th:text="${goods.conditionLevel}"></span> 成新</p>
+        <p>交易地点：<span th:text="${goods.tradePlace}"></span></p>
+        <p>浏览量：<span th:text="${goods.viewCount}"></span></p>
+        <p th:text="${goods.description}"></p>
+        <div class="row" th:if="${session.loginUser != null}">
+            <form method="post" th:action="@{/goods/{id}/favorite(id=${goods.id})}">
+                <button class="btn secondary" type="submit" th:text="${favorite} ? '取消收藏' : '收藏商品'"></button>
+            </form>
+        </div>
+    </section>
+    <section class="panel" th:if="${session.loginUser != null}">
+        <h2 class="title">购买商品</h2>
+        <form class="form" method="post" th:action="@{/orders/create/{id}(id=${goods.id})}">
+            <label>约定交易地点 <input name="tradePlace" th:value="${goods.tradePlace}" required></label>
+            <label>买家备注 <textarea name="buyerRemark" placeholder="可选"></textarea></label>
+            <button class="btn" type="submit" th:disabled="${goods.status != 1}">创建订单</button>
+        </form>
+    </section>
+    <section class="panel" th:if="${session.loginUser != null}">
+        <h2 class="title">举报商品</h2>
+        <form class="form" method="post" th:action="@{/goods/{id}/report(id=${goods.id})}">
+            <label>举报原因 <input name="reason" required maxlength="100"></label>
+            <label>详细说明 <textarea name="description"></textarea></label>
+            <button class="btn danger" type="submit">提交举报</button>
+        </form>
+    </section>
+    <section class="panel">
+        <h2 class="title">交易评价</h2>
+        <div class="card" th:each="review : ${reviews}">
+            <p><strong th:text="${review.buyerName}"></strong> <span class="badge" th:text="${review.score} + ' 分'"></span></p>
+            <p th:text="${review.content}"></p>
+        </div>
+        <p class="muted" th:if="${reviews == null || reviews.isEmpty()}">暂无评价</p>
+    </section>
+    <section class="panel">
+        <h2 class="title">留言咨询</h2>
+        <div class="card" th:each="message : ${messages}">
+            <p><strong th:text="${message.username}"></strong> <span class="muted" th:text="${message.createTime}"></span></p>
+            <p th:text="${message.content}"></p>
+            <form class="row" method="post" th:if="${session.loginUser != null && session.loginUser.id == goods.sellerId}" th:action="@{/goods/{id}/message(id=${goods.id})}">
+                <input type="hidden" name="parentId" th:value="${message.id}">
+                <input name="content" required placeholder="回复留言">
+                <button class="btn light" type="submit">回复</button>
+            </form>
+        </div>
+        <form class="form" method="post" th:if="${session.loginUser != null}" th:action="@{/goods/{id}/message(id=${goods.id})}">
+            <label>留言内容 <textarea name="content" required></textarea></label>
+            <button class="btn" type="submit">提交留言</button>
+        </form>
+        <p th:if="${session.loginUser == null}"><a href="/login">登录后留言或购买</a></p>
+    </section>
+</main>
+</body>
+</html>

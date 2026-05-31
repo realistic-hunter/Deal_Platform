@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>商品列表</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="topbar">
+    <a class="brand" href="/goods">校园二手交易平台</a>
+    <nav class="nav">
+        <a href="/goods/create">发布商品</a>
+        <a href="/goods/my">我的发布</a>
+        <a href="/favorites">我的收藏</a>
+        <a href="/history">浏览记录</a>
+        <a href="/orders/buy">购买订单</a>
+        <a href="/orders/sell">出售订单</a>
+        <a href="/notifications">消息</a>
+        <a href="/profile">个人中心</a>
+        <a th:if="${session.loginUser != null && session.loginUser.roleCode == 'admin'}" href="/admin">后台</a>
+        <a th:if="${session.loginUser == null}" href="/login">登录</a>
+        <a th:if="${session.loginUser != null}" href="/logout">退出</a>
+    </nav>
+</header>
+<main class="container">
+    <section class="banner-strip" th:if="${banners != null && !banners.isEmpty()}">
+        <a class="banner" th:each="banner : ${banners}" th:href="${banner.linkUrl}">
+            <img th:src="${banner.imageUrl}" alt="轮播图">
+            <strong th:text="${banner.title}"></strong>
+        </a>
+    </section>
+    <section class="panel" th:if="${notices != null && !notices.isEmpty()}">
+        <h2 class="title">系统公告</h2>
+        <p th:each="notice : ${notices}">
+            <strong th:text="${notice.title}"></strong>
+            <span class="muted" th:text="${notice.content}"></span>
+        </p>
+    </section>
+    <section class="panel">
+        <h1 class="title">商品列表</h1>
+        <form class="row" method="get" action="/goods">
+            <input name="keyword" th:value="${keyword}" placeholder="搜索商品标题或描述">
+            <select name="categoryId">
+                <option value="">全部分类</option>
+                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.categoryName}" th:selected="${category.id == categoryId}"></option>
+            </select>
+            <select name="sort">
+                <option value="" th:selected="${sort == null || sort == ''}">最新发布</option>
+                <option value="price_asc" th:selected="${sort == 'price_asc'}">价格从低到高</option>
+                <option value="price_desc" th:selected="${sort == 'price_desc'}">价格从高到低</option>
+                <option value="views" th:selected="${sort == 'views'}">浏览量优先</option>
+            </select>
+            <button class="btn" type="submit">查询</button>
+        </form>
+    </section>
+    <section class="grid">
+        <article class="card" th:each="goods : ${pageData.records}">
+            <img class="cover" th:if="${goods.coverImageUrl}" th:src="${goods.coverImageUrl}" alt="商品图片">
+            <h2 class="title" th:text="${goods.title}"></h2>
+            <p><span class="badge" th:text="${goods.categoryName}"></span></p>
+            <p class="price" th:text="'￥' + ${goods.price}"></p>
+            <p class="muted" th:text="${goods.tradePlace}"></p>
+            <p th:text="${#strings.abbreviate(goods.description, 80)}"></p>
+            <a class="btn light" th:href="@{/goods/{id}(id=${goods.id})}">查看详情</a>
+        </article>
+    </section>
+    <div class="pagination">
+        <a class="btn light" th:if="${pageData.hasPrevious}" th:href="@{/goods(page=${pageData.page - 1}, keyword=${keyword}, categoryId=${categoryId}, sort=${sort})}">上一页</a>
+        <span th:text="'第 ' + ${pageData.page} + ' / ' + ${pageData.totalPages} + ' 页，共 ' + ${pageData.total} + ' 条'"></span>
+        <a class="btn light" th:if="${pageData.hasNext}" th:href="@{/goods(page=${pageData.page + 1}, keyword=${keyword}, categoryId=${categoryId}, sort=${sort})}">下一页</a>
+    </div>
+</main>
+</body>
+</html>
